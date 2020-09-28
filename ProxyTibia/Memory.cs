@@ -19,7 +19,7 @@ namespace ProxyTibia
             byte[] buffer = new byte[sizeof(int)];
             IntPtr NumberOfBytesRead = IntPtr.Zero;
 
-            ReadProcessMemory(Tibia.Client.Handle, memory_adr, buffer, 4, NumberOfBytesRead);
+            ReadProcessMemory(Tibia.Client.Handle, (IntPtr)memory_adr, buffer, 4, NumberOfBytesRead);
             return BitConverter.ToUInt32(buffer, 0);
         }
 

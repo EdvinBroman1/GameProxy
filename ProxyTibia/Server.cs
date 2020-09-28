@@ -11,14 +11,18 @@ namespace ProxyTibia
 
         public string m_IPAddress { get; set; }
         public int m_Port { get; set; }
+
+        public string m_RemoteIP { get; set; }
         public int m_RemotePort { get; set; }
+
         public Client m_Client { get; set; }
 
 
-        public Server(string IP, int Port, int RemotePort) // IP can be submitted in number or domain form
+        public Server(string IP, int Port, string RemoteIP, int RemotePort) // IP can be submitted in number or domain form
         {
             this.m_IPAddress = IP;
             this.m_Port = Port;
+            this.m_RemoteIP = RemoteIP;
             this.m_RemotePort = RemotePort;
             this.m_Client = new Client(this.m_IPAddress, RemotePort,this);
             
@@ -42,12 +46,13 @@ namespace ProxyTibia
                 listener.Bind(localEndPoint);
                 listener.Listen(10);
 
-                Console.WriteLine("Waiting connctioen ... ");
+                Console.WriteLine($"Server setup.. awaiting connection on port -> {m_Port}... ");
+                clientSocket = listener.Accept(); // next packet...
                 while (true)
                 {
-                    clientSocket = listener.Accept();
 
-                    byte[] bytes = new Byte[512];
+
+                    byte[] bytes = new Byte[512]; 
                     int bytecount = clientSocket.Receive(bytes);
                     byte[] btRecvData = new Byte[bytecount];
                     Array.Copy(bytes, 0, btRecvData, 0, bytecount);
@@ -57,8 +62,9 @@ namespace ProxyTibia
                         Console.WriteLine("TibiaClient->TibiaServer");
                         Console.WriteLine(Print.HexDump(btRecvData));
                         m_Client.SendToServer(btRecvData);
-
                     }
+
+                    clientSocket = listener.Accept();
 
                 }
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace ProxyTibia
 {
@@ -6,11 +7,29 @@ namespace ProxyTibia
     {
         static void Main(string[] args)
         {
-            Server s = new Server("127.0.0.1", 7170, 7171);
-            s.StartUp();
-            Console.ReadLine();
+            Thread LoginThread = new Thread(SetupLoginServer);
+            LoginThread.Start();
+
+            Thread GameThread = new Thread(SetupGameServer);
+            GameThread.Start();
 
             Console.WriteLine("Hello World!");
+            Console.ReadKey();
         }
+
+
+
+        static void SetupLoginServer()
+        {
+            Server LoginServer = new Server("127.0.0.1", 7170, "127.0.0.1", 7171);
+            LoginServer.StartUp();
+        }
+
+        static void SetupGameServer()
+        {
+            Server GameServer = new Server("127.0.0.1", 7172, "localhost", 7172);
+            GameServer.StartUp();
+        }
+
     }
 }

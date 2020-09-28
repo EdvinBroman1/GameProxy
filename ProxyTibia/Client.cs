@@ -19,7 +19,7 @@ namespace ProxyTibia
             this.m_IPAddress = IP;
             this.m_Port = Port;
             this.m_Server = server;
-            this.ConnectToTibiaServer();
+          //  this.ConnectToTibiaServer();
         }
 
         public void ConnectToTibiaServer()
@@ -43,13 +43,15 @@ namespace ProxyTibia
 
         public void SendToServer(byte[] buffer)
         {
+            this.ConnectToTibiaServer();
+            sender.Send(buffer);
 
-             sender.Send(buffer);
-
-            byte[] messageReceived = new Byte[512];
+            byte[] messageReceived = new byte[512];
             int byteRecv = sender.Receive(messageReceived);
+            // resizing, client crashes if packets are too large.
             byte[] btRecvData = new byte[byteRecv];
             Array.Copy(messageReceived, 0, btRecvData, 0, byteRecv);
+
             Console.WriteLine("TibiaServer->TibiaClient");
              Console.WriteLine(Print.HexDump(btRecvData));
 
